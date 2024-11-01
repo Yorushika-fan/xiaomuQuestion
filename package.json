@@ -1,0 +1,69 @@
+{
+    "name": "vite-react-template",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "lint:lint-staged": "lint-staged",
+        "lint:eslint": "eslint --max-warnings 0 \"src/**/*.{js,jsx,ts,tsx}\" --fix",
+        "lint:prettier": "prettier --write --loglevel warn \"src/**/*.{js,ts,json,jsx,tsx,css,less,scss,vue,html,md}\"",
+        "lint:stylelint": "stylelint --cache --fix \"**/*.{less,postcss,css,scss}\" --cache --cache-location node_modules/.cache/stylelint/",
+        "preview": "vite preview",
+        "prepare": "husky",
+        "commitlint": "commitlint --edit",
+        "clean:lint-staged": "rm -rf node_modules/.cache/lint-staged"
+    },
+    "lint-staged": {
+        "*.{js,jsx,ts,tsx}": [
+            "eslint --fix",
+            "prettier --write"
+        ],
+        "{!(package)*.json,*.code-snippets,.!(browserslist)*rc}": [
+            "prettier --write --parser json"
+        ],
+        "package.json": [
+            "prettier --write"
+        ],
+        "*.{css,scss,less}": [
+            "stylelint --fix",
+            "prettier --write"
+        ],
+        "*.{md,html}": [
+            "prettier --write"
+        ]
+    },
+    "dependencies": {
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
+    },
+    "devDependencies": {
+        "@commitlint/cli": "^19.5.0",
+        "@commitlint/config-conventional": "^19.5.0",
+        "@eslint/js": "^9.13.0",
+        "@types/react": "^18.3.12",
+        "@types/react-dom": "^18.3.1",
+        "@vitejs/plugin-react": "^4.3.3",
+        "eslint": "^9.13.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-prettier": "^5.2.1",
+        "eslint-plugin-react": "^7.37.2",
+        "eslint-plugin-react-hooks": "^5.0.0",
+        "eslint-plugin-react-refresh": "^0.4.14",
+        "eslint-plugin-unused-imports": "^4.1.4",
+        "globals": "^15.11.0",
+        "husky": "^9.1.6",
+        "lint-staged": "^15.2.10",
+        "prettier": "3.3.3",
+        "stylelint": "^16.10.0",
+        "stylelint-config-prettier": "^9.0.5",
+        "stylelint-config-recess-order": "^5.1.1",
+        "stylelint-config-standard": "^36.0.1",
+        "stylelint-prettier": "^5.0.2",
+        "typescript": "~5.6.3",
+        "typescript-eslint": "^8.12.2",
+        "unocss": "^0.63.6",
+        "vite": "^5.4.10"
+    }
+}
