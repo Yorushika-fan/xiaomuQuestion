@@ -7,9 +7,11 @@ import QuestionLayout from '@/components/layouts/QuestionLayout'
 import List from '@/pages/manage/List'
 import Star from '@/pages/manage/Star'
 import Trash from '@/pages/manage/trash'
-import Edit from '@/pages/question/Edit'
+import Edit from '@/pages/question/edit'
 import Stat from '@/pages/question/Stat'
 import NotFound from '@/pages/error/NotFound'
+import Demo from '@/pages/demo'
+import Todo from '@/pages/todo'
 
 const router = createBrowserRouter([
     {
@@ -63,6 +65,14 @@ const router = createBrowserRouter([
                         element: <Stat />
                     }
                 ]
+            },
+            {
+                path: 'demo',
+                element: <Demo />
+            },
+            {
+                path: 'todo',
+                element: <Todo />
             },
             {
                 path: '*',

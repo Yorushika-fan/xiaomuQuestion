@@ -1,43 +1,51 @@
-import {Form, Input, Button, Card, Typography, Checkbox} from 'antd'
+import {Form, Input, Button, Card, Typography, Checkbox, message} from 'antd'
 import {UserOutlined, LockOutlined} from '@ant-design/icons'
-
-interface LoginForm {
-    username: string
-    password: string
-    remember: boolean
-}
-const USERNAME_KEY = 'username'
-const PASSWORD_KEY = 'password'
-
+import {useRequest} from 'ahooks'
+import {userLogin} from '@/api/user'
+import {USER_INFO_KEY} from '@/constants'
+import {LoginForm} from '@/types'
+import {MANAGE_INDEX_PATHNAME} from '@/constants'
 const rememberMe = (username: string, password: string) => {
-    localStorage.setItem(USERNAME_KEY, username)
-    localStorage.setItem(PASSWORD_KEY, password)
+    localStorage.setItem(USER_INFO_KEY, JSON.stringify({username, password}))
 }
 
-const forgetMe = () => {
-    localStorage.removeItem(USERNAME_KEY)
-    localStorage.removeItem(PASSWORD_KEY)
+const forgetMe = () => localStorage.removeItem(USER_INFO_KEY)
+
+const getUserInfo = (): LoginForm | null => {
+    const userInfo = localStorage.getItem(USER_INFO_KEY)
+    return userInfo ? JSON.parse(userInfo) : null
 }
-const getUserInfo = () => {
-    return {
-        username: localStorage.getItem(USERNAME_KEY),
-        password: localStorage.getItem(PASSWORD_KEY)
-    }
-}
+
 const Login = () => {
+    const navigate = useNavigate()
     const [form] = Form.useForm()
 
     const onFinish = (values: LoginForm) => {
-        console.log('登录表单提交:', values)
         if (values.remember) {
             rememberMe(values.username, values.password)
         } else {
             forgetMe()
         }
+        loginHandler(values)
     }
+    const {run: loginHandler, loading} = useRequest(
+        async (params: LoginForm) => {
+            const res = await userLogin(params)
+            return res.data
+        },
+        {
+            manual: true,
+            onSuccess: res => {
+                message.success('登录成功')
+                setToken(res.token)
+                navigate(MANAGE_INDEX_PATHNAME)
+            }
+        }
+    )
+
     useEffect(() => {
         const userInfo = getUserInfo()
-        if (userInfo.username && userInfo.password) {
+        if (userInfo?.username && userInfo?.password) {
             form.setFieldsValue(userInfo)
         }
     }, [form])
@@ -54,7 +62,12 @@ const Login = () => {
                         name="username"
                         rules={[
                             {required: true, message: '请输入用户名'},
-                            {type: 'string', min: 5, max: 30, message: '用户名长度在5-30个字符之间'},
+                            {
+                                type: 'string',
+                                min: 5,
+                                max: 30,
+                                message: '用户名长度在5-30个字符之间'
+                            },
                             {
                                 pattern: /^[a-zA-Z0-9_-]{5,30}$/,
                                 message: '用户名只能包含字母、数字、下划线、中划线'
@@ -72,7 +85,7 @@ const Login = () => {
                     </Form.Item>
 
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" block size="large">
+                        <Button type="primary" htmlType="submit" block size="large" loading={loading}>
                             登录
                         </Button>
                     </Form.Item>

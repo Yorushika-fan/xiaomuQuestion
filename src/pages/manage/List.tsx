@@ -1,4 +1,4 @@
-import Card, {QuestionCard} from '@/components/card'
+import Card from '@/components/card'
 import {Empty, Spin, Typography} from 'antd'
 import {Input} from 'antd'
 import {SearchProps} from 'antd/es/input'
@@ -6,6 +6,7 @@ import {SearchProps} from 'antd/es/input'
 import {LIST_SEARCH_PARAM_KEY} from '@/constants'
 import {useSearchParams} from 'react-router-dom'
 import {useDebounceFn, useRequest} from 'ahooks'
+import {QuestionCard} from '@/types'
 
 const {Search} = Input
 const List = () => {
@@ -13,8 +14,10 @@ const List = () => {
     const [page, setPage] = useState(DEFAULT_CURRENT)
     const [list, setList] = useState<QuestionCard[]>([])
     const [total, setTotal] = useState(0)
+    const [started, setStared] = useState(false)
     const haveMoreData = total > list.length
     const [searchParams, setSearchParams] = useSearchParams()
+    const keyword = searchParams.get(LIST_SEARCH_PARAM_KEY) || ''
     const onSearch: SearchProps['onSearch'] = value => {
         setSearchParams({[LIST_SEARCH_PARAM_KEY]: value})
     }
@@ -25,7 +28,7 @@ const List = () => {
             const data = await getQuestionList({
                 page,
                 pageSize: DEFAULT_PAGE_SIZE,
-                keyword: searchParams.get(LIST_SEARCH_PARAM_KEY) || ''
+                keyword: keyword
             })
             return data
         },
@@ -48,6 +51,7 @@ const List = () => {
             const {bottom} = domRect
             if (bottom <= document.body.clientHeight) {
                 load()
+                setStared(true)
             }
         },
         {
@@ -56,8 +60,15 @@ const List = () => {
     )
 
     useEffect(() => {
+        setStared(false)
+        setPage(DEFAULT_CURRENT)
+        setList([])
+        setTotal(0)
+    }, [keyword])
+
+    useEffect(() => {
         tyrLoadMore()
-    }, [searchParams, tyrLoadMore])
+    }, [searchParams])
 
     useEffect(() => {
         if (haveMoreData) {
@@ -67,10 +78,10 @@ const List = () => {
         return () => {
             window.removeEventListener('scroll', tyrLoadMore)
         }
-    }, [searchParams, tyrLoadMore, haveMoreData])
+    }, [searchParams, haveMoreData])
 
     const LoadMoreContentElem = () => {
-        if (loading) return <Spin tip="加载中..." />
+        if (!started || loading) return <Spin tip="加载中..." />
         if (total === 0) return <Empty description="暂无数据" />
         if (!haveMoreData) return <div>没有更多了</div>
         return <span>开始加载</span>

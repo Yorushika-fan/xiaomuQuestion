@@ -1,8 +1,8 @@
 import globals from 'globals'
 import pluginJs from '@eslint/js'
 import tseslint from 'typescript-eslint'
-import pluginReact from 'eslint-plugin-react'
 import pluginPrettier from 'eslint-plugin-prettier/recommended'
+import pluginReact from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import unusedImports from 'eslint-plugin-unused-imports'
@@ -40,6 +40,7 @@ export default [
         rules: {
             ...reactHooks.configs.recommended.rules,
             'react-refresh/only-export-components': ['warn', {allowConstantExport: true}],
+            'react-hooks/exhaustive-deps': 'off',
             'no-unused-vars': [
                 'error',
                 {
@@ -79,6 +80,7 @@ export default [
     // 插件配置
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,
+    pluginPrettier,
     {
         ...pluginReact.configs.flat.recommended,
         settings: {
@@ -89,6 +91,5 @@ export default [
         rules: {
             'react/react-in-jsx-scope': 'off'
         }
-    },
-    pluginPrettier
+    }
 ]

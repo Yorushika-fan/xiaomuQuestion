@@ -12,7 +12,7 @@ const Welcome = () => {
         }, 3000)
 
         return () => clearTimeout(timer)
-    }, [navigate])
+    })
 
     return (
         <div className="min-h-screen bg-gradient-to-r from-purple-400 to-pink-400 flex flex-col items-center justify-center">

@@ -1,7 +1,7 @@
 import axios, {AxiosError, AxiosResponse} from 'axios'
 import {checkStatus} from './status'
 import {message} from 'antd'
-
+import {getToken} from '@/utils/user'
 // 创建新的axios实例
 const service = axios.create({
     // 公共接口
@@ -17,10 +17,11 @@ service.interceptors.request.use(
         // 每次发送请求之前判断zustand中是否存在token，如果存在，则统一在http请求的header都加上token，这样后台根据token判断你的登录情况
         // const token = useSettingStore.getState().token;
 
-        // if (token) {
-        //   config.headers.Authorization = `Bearer ${token}`;
-        // }
+        const token = getToken()
 
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`
+        }
         return config
     },
     (error: AxiosError) => {

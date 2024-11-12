@@ -9,7 +9,11 @@ const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?
 const Star = () => {
     const [current, setCurrent] = useState(DEFAULT_CURRENT)
     const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE)
-    const {data, loading} = useLoadQuestionListData({isStar: true, page: current, pageSize})
+    const {data, loading} = useLoadQuestionListData({
+        isStar: true,
+        page: current,
+        pageSize
+    })
     const [, setSearchParams] = useSearchParams()
 
     const onChange: PaginationProps['onChange'] = (pageNumber, pageSize) => {

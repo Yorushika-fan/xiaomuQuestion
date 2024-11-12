@@ -1,19 +1,31 @@
-import {Form, Input, Button, Card, Typography} from 'antd'
-import {UserOutlined, MailOutlined, LockOutlined} from '@ant-design/icons'
-import axios from 'axios'
+import {Form, Input, Button, Card, Typography, message} from 'antd'
+import {UserOutlined, LockOutlined} from '@ant-design/icons'
+import {useRequest} from 'ahooks'
+import {userRegister} from '@/api'
+import {RegisterForm} from '@/types'
 
 const Register = () => {
     const [form] = Form.useForm()
+    const navigate = useNavigate()
 
-    const onFinish = (values: unknown) => {
-        console.log('注册表单提交:', values)
+    const {run: registerHandler, loading} = useRequest(
+        async (options: RegisterForm) => {
+            console.log('options', options)
+            const res = await userRegister(options)
+            return res.data
+        },
+        {
+            manual: true,
+            onSuccess: () => {
+                message.success('注册成功')
+                navigate('/login')
+            }
+        }
+    )
+
+    const onFinish = (values: RegisterForm) => {
+        registerHandler(values)
     }
-
-    useEffect(() => {
-        axios.get('/mock/api/test').then(res => {
-            console.log('注册页面加载', res.data)
-        })
-    }, [])
 
     return (
         <div className="h-[calc(100vh-64px-64px)] flex items-center justify-center bg-gray-50">
@@ -28,12 +40,12 @@ const Register = () => {
                     </Form.Item>
 
                     <Form.Item
-                        name="email"
+                        name="nickname"
                         rules={[
-                            {required: true, message: '请输入邮箱'},
-                            {type: 'email', message: '请输入有效的邮箱地址'}
+                            {required: true, message: '请输入昵称'},
+                            {min: 2, message: '昵称长度至少2位'}
                         ]}>
-                        <Input prefix={<MailOutlined />} placeholder="邮箱地址" size="large" />
+                        <Input prefix={<UserOutlined />} placeholder="昵称" size="large" />
                     </Form.Item>
 
                     <Form.Item
@@ -62,7 +74,7 @@ const Register = () => {
                     </Form.Item>
 
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" block size="large">
+                        <Button loading={loading} type="primary" htmlType="submit" block size="large">
                             注册
                         </Button>
                     </Form.Item>
